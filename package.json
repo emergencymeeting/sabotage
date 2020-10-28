@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "nodemon",
-    "test": "jest --coverage --forceExit && standard",
+    "test": "jest --coverage --forceExit",
     "build": "tsc",
     "format": "prettier --write **/*.ts"
   },
@@ -23,9 +23,7 @@
   "dependencies": {
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
-    "owoify-js": "^1.0.7",
-    "signale": "^1.4.0",
-    "unique-random": "^2.1.0"
+    "signale": "^1.4.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
@@ -35,14 +33,8 @@
     "nodemon": "^2.0.6",
     "prettier": "^2.1.2",
     "pretty-quick": "^3.1.0",
-    "standard": "^15.0.1",
     "ts-jest": "^26.4.3",
     "typescript": "^4.0.5"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
   },
   "husky": {
     "hooks": {
