@@ -6,6 +6,6 @@ import { Bot } from '../lib/bot'
  */
 export function code(bot: Bot) {
   bot.command('code', async (_: string, msg: Message) => {
-    // example
+    bot.log.info('Someone said .code?', msg)
   })
 }
