@@ -1,0 +1,29 @@
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+
+    steps:
+      # Setup the local repo and Node.js
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Install dependencies
+      - run: npm ci
+
+      # While we don't need to build things to test them, we want to
+      # be sure that it builds without erroring.
+      - run: npm run build
+
+      # Run the tests
+      - run: npm test

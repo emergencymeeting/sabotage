@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bot #respondWithError calls msg.channel.send with the error message 1`] = `
+Array [
+  "Error:",
+  Object {
+    "embed": Object {
+      "color": 16711680,
+      "description": "Oh no!",
+    },
+  },
+]
+`;
