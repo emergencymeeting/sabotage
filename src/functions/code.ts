@@ -49,7 +49,7 @@ export function code(bot: Bot) {
     if (!voiceState.channel) return
     // Someone left the voice call, check that its empty now
     if (voiceState.channel.members.size !== 0) return
-    // Reset the name
+    // Reset the name (replaces the ending `... (CODEEE)`)
     const basename = voiceState.channel.name.replace(/\s\([A-Z]{6}\)$/, '')
     return voiceState.channel.setName(basename)
   })
