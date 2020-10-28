@@ -43,9 +43,14 @@ export function code(bot: Bot) {
     }
   })
 
-  // When someone leaves the voice call, if they're the last one to leave,
-  // bot.on('disconnect', () => {
-  // Someone left the voice call
-
-  // })
+  // When someone leaves the voice call, if they're the
+  // last one to leave, reset the name
+  bot.on('voiceStateUpdate', (voiceState) => {
+    if (!voiceState.channel) return
+    // Someone left the voice call, check that its empty now
+    if (voiceState.channel.members.size !== 0) return
+    // Reset the name
+    const basename = voiceState.channel.name.replace(/\s\([A-Z]{6}\)$/, '')
+    return voiceState.channel.setName(basename)
+  })
 }
