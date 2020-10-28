@@ -1,5 +1,5 @@
 {
-  "watch": ["functions", "lib"],
+  "watch": ["src"],
   "ext": "ts",
   "ignore": ["tests/**/*.ts"],
   "exec": "npm run build && npm start"
