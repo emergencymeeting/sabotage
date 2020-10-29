@@ -1,6 +1,11 @@
 import { Bot } from '../lib/bot'
 
 const codeRegex = /^[A-Za-z]{6}$/
+const defaultChannels = ['afk', 'mod-lounge', '+ New Game']
+const defaultRoomNum = 3
+for (let i = 0; i < defaultRoomNum; i++) {
+  defaultChannels.push('#' + (i + 1))
+}
 
 /**
  * Manages Among Us voice channel names by appending/removing
@@ -21,28 +26,26 @@ export function code(bot: Bot) {
 
     // Find the voice channel named `Game <number>`
     const voiceChannel = msg.guild.channels.cache.find((channel) => {
-      return (
-        channel.type === 'voice' && channel.name.startsWith(`Game ${number}`)
-      )
+      return channel.type === 'voice' && channel.name.startsWith(`#${number}`)
     })
 
     // No voice channel, no happiness
     if (!voiceChannel) {
       return msg.channel.send(
-        `Voice channel **Game ${number}** does not exist!`
+        `Voice channel **Game #${number}** does not exist!`
       )
     }
 
     if (code) {
       // Set the channel name to Game 1 (ABCDEQ)
       const uppercaseCode = code.toUpperCase()
-      await voiceChannel.setName(`Game ${number} (${uppercaseCode})`)
+      await voiceChannel.setName(`#${number}: ${uppercaseCode}`)
       return msg.channel.send(
         `Game ${number}'s invite code is now set to **\`${uppercaseCode}\`**!`
       )
     } else {
       // Set the channel name to Game 1
-      await voiceChannel.setName(`Game ${number}`)
+      await voiceChannel.setName(`#${number}`)
       return msg.channel.send(`Game ${number}'s invite code has been reset`)
     }
   })
@@ -51,12 +54,62 @@ export function code(bot: Bot) {
    * When someone leaves the voice call, if they're the
    * last one to leave, reset the name
    */
-  bot.on('voiceStateUpdate', (voiceState) => {
-    if (!voiceState.channel) return
-    // Someone left the voice call, check that its empty now
-    if (voiceState.channel.members.size !== 0) return
-    // Reset the name (replaces the ending `... (CODEEE)`)
-    const basename = voiceState.channel.name.replace(/\s\([A-Z]{6}\)$/, '')
-    return voiceState.channel.setName(basename)
+  bot.on('voiceStateUpdate', (oldChannel, newChannel) => {
+    // Check the channel someone just left
+    if (oldChannel.channel) {
+      // Check if the channel they left is empty
+      if (oldChannel.channel.members.size === 0) {
+        // If it's not a default channel, delete it
+        const isDefaultChannel = defaultChannels.some((channel) =>
+          oldChannel.channel?.name.startsWith(channel)
+        )
+        if (!isDefaultChannel) {
+          oldChannel.channel.delete()
+        }
+
+        // If it is a default channel, reset its name (replace the ending `... (CODEEE)`)
+        const basename = oldChannel.channel.name.replace(/\:\s[A-Z]{6}$/, '')
+        oldChannel.channel.setName(basename)
+      }
+    }
+
+    // Check if someone is joining a new channel
+    if (newChannel.channel) {
+      // If that channel is the New Game channel
+      if (newChannel.channel.name === '+ New Game') {
+        // Create a new New Game channel
+        newChannel.channel.clone()
+
+        const gameChannels = newChannel.guild.channels.cache.filter(
+          (channel) => channel.type === 'voice' && channel.name.startsWith(`#`)
+        )
+
+        const matchReg = /^#(?<number>\d+)/
+
+        let highestChannel = 0
+        for (const [_, gameChannel] of gameChannels.entries()) {
+          const match = gameChannel.name.match(matchReg)
+          if (!match || !match.groups) continue
+
+          if (!highestChannel) {
+            highestChannel = Number(match.groups.number)
+          } else {
+            highestChannel = Math.max(
+              highestChannel,
+              Number(match.groups.number)
+            )
+          }
+        }
+
+        // Turn the current one into another game channel
+        newChannel.channel.setName(`#${highestChannel + 1}`)
+      }
+    }
   })
 }
+
+/* 
+
+// If channel 
+
+*/
