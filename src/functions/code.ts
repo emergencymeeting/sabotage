@@ -1,6 +1,8 @@
 import { Bot } from '../lib/bot'
 
 const codeRegex = /^[A-Za-z]{6}$/
+const channelNumberRegex = /^#(?<number>\d+)/
+
 const defaultChannels = ['afk', 'mod-lounge', '+ New Game']
 const defaultRoomNum = 3
 for (let i = 0; i < defaultRoomNum; i++) {
@@ -54,7 +56,7 @@ export function code(bot: Bot) {
    * When someone leaves the voice call, if they're the
    * last one to leave, reset the name
    */
-  bot.on('voiceStateUpdate', (oldChannel, newChannel) => {
+  bot.on('voiceStateUpdate', async (oldChannel, newChannel) => {
     // Check the channel someone just left
     if (oldChannel.channel) {
       // Check if the channel they left is empty
@@ -64,12 +66,12 @@ export function code(bot: Bot) {
           oldChannel.channel?.name.startsWith(channel)
         )
         if (!isDefaultChannel) {
-          oldChannel.channel.delete()
+          await oldChannel.channel.delete()
         }
 
         // If it is a default channel, reset its name (replace the ending `... (CODEEE)`)
         const basename = oldChannel.channel.name.replace(/\:\s[A-Z]{6}$/, '')
-        oldChannel.channel.setName(basename)
+        await oldChannel.channel.setName(basename)
       }
     }
 
@@ -78,17 +80,16 @@ export function code(bot: Bot) {
       // If that channel is the New Game channel
       if (newChannel.channel.name === '+ New Game') {
         // Create a new New Game channel
-        newChannel.channel.clone()
+        await newChannel.channel.clone()
 
         const gameChannels = newChannel.guild.channels.cache.filter(
           (channel) => channel.type === 'voice' && channel.name.startsWith(`#`)
         )
 
-        const matchReg = /^#(?<number>\d+)/
-
+        // Find the highest channel number
         let highestChannel = 0
         for (const [_, gameChannel] of gameChannels.entries()) {
-          const match = gameChannel.name.match(matchReg)
+          const match = gameChannel.name.match(channelNumberRegex)
           if (!match || !match.groups) continue
 
           if (!highestChannel) {
@@ -102,7 +103,10 @@ export function code(bot: Bot) {
         }
 
         // Turn the current one into another game channel
-        newChannel.channel.setName(`#${highestChannel + 1}`)
+        await newChannel.channel.edit({
+          name: `#${highestChannel + 1}`,
+          userLimit: 99,
+        })
       }
     }
   })
