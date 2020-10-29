@@ -16,7 +16,7 @@ RUN npm ci
 # BUNDLE IMAGE
 # A temporary image that installs dependencies and builds the production-ready server.
 FROM node:lts-alpine as bundles
-WORKDIR /usr/src/docs
+WORKDIR /usr/src/sabotage
 # Install the files used to create the bundles
 COPY package*.json ./
 COPY tsconfig.json ./tsconfig.json
@@ -32,14 +32,14 @@ FROM node:lts-alpine
 WORKDIR /usr/src/sabotage
 
 # Ensure our node user owns the directory we're using
-RUN chown node:node /usr/src/docs -R
+RUN chown node:node /usr/src/sabotage -R
 
 # This should be our normal running user
 USER node
 
 # Copy our dependencies
-COPY --chown=node:node --from=installation /usr/src/docs/node_modules /usr/src/docs/node_modules
-COPY --chown=node:node --from=bundles /usr/src/docs/dist /usr/src/docs/dist
+COPY --chown=node:node --from=installation /usr/src/sabotage/node_modules /usr/src/sabotage/node_modules
+COPY --chown=node:node --from=bundles /usr/src/sabotage/dist /usr/src/sabotage/dist
 
 # We should always be running in production mode
 ENV NODE_ENV production
