@@ -18,7 +18,7 @@ cd sabotage
 ## step 3: get all of our dependencies
 npm install
 
-## step 5: build the app
+## step 4: build the app
 npm run build
 ```
 
@@ -32,4 +32,22 @@ Then, run the app:
 
 ```
 npm run start
+```
+
+## Local Development
+
+To start, run the following commands:
+
+```
+## step 1: pull down this repository
+git clone https://github.com/JasonEtco/sabotage.git
+
+## step 2: open up the repository we just pulled down
+cd sabotage
+
+## step 3: get all of our dependencies
+npm install
+
+## step 4: run the dev server
+npm run dev
 ```
