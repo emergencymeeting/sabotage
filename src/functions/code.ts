@@ -22,26 +22,31 @@ export function code(bot: Bot) {
     let [number, code] = args.split(' ')
 
     // If someone uses shorthand syntax (.code CODEEE)
-    if ((number && codeRegex.test(number)) || number === 'reset') {
-      // Get the author
-      await msg.guild.members.fetch(msg.author.id).then((author) => {
-        // See if they are in any voice channels
-        if (author.voice.channel?.name) {
-          // Get the channel name and number
-          let channelName = author.voice.channel?.name
-          let match = channelName.match(channelNumberRegex)
-          // Assign shorthand variables to default behavior
-          if (match?.groups?.number) {
-            code = number === 'reset' ? '' : number
-            number = match?.groups?.number
+    if (!code) {
+      if ((number && codeRegex.test(number)) || number === 'reset') {
+        // Get the author
+        await msg.guild.members.fetch(msg.author.id).then((author) => {
+          // See if they are in any voice channels
+          if (author.voice.channel?.name) {
+            // Get the channel name and number
+            let channelName = author.voice.channel?.name
+            let match = channelName.match(channelNumberRegex)
+            // Assign shorthand variables to default behavior
+            if (match?.groups?.number) {
+              code = number === 'reset' ? '' : number
+              number = match?.groups?.number
+            }
+          } else {
+            // If someone is not in a voice channel, don't allow shorthand, end here so there's no double message
+            return msg.channel.send(
+              `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
+            )
           }
-        } else {
-          // If someone is not in a voice channel, don't allow shorthand
-          msg.channel.send(
-            `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
-          )
-        }
-      })
+        })
+        // If the code is not valid, let the next message be sent
+      } else {
+        code = number
+      }
     }
 
     // If there is a code and its invalid, tell them
