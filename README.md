@@ -2,6 +2,8 @@
 
 A Discord bot for Among Us, written in Node.js.
 
+It's primarily built to make it easier to share your current private room code, but it can do some other stuff too!
+
 ## Running The Bot
 
 To start, run the following commands: 
@@ -22,7 +24,9 @@ npm install
 npm run build
 ```
 
-You'll need to set up a Discord App. From that app, we're going to create a file called `.env` in the directory, you'll need to add your bot token in the following format:
+You'll need to [set up a Discord App](https://discord.com/developers/applications). In the Developer Portal page for your app, go to the 'Bot' side tab, create a new bot, and note the bot token it generates. 
+
+After that, create a file called `.env` in the project directory and add your bot token in the following format:
 
 ```
 BOT_TOKEN=<your discord bot app token>
