@@ -3,7 +3,7 @@ import { Bot } from '../lib/bot'
 const mapUrls: { [key: string]: string } = {
   skeld: '',
   mira: '',
-  polus: '',
+  polus: 'https://cdn.discordapp.com/attachments/770436254663180321/771212583298531378/knmus9a2vgj51.png',
 }
 
 /**
