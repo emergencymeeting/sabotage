@@ -68,7 +68,7 @@ export function code(bot: Bot) {
       const uppercaseCode = code.toUpperCase()
       await voiceChannel.setName(`#${number}: ${uppercaseCode}`)
       return msg.channel.send(
-        `Game ${number}'s invite code is now set to **\`${uppercaseCode}\`**!`
+        `Game #${number}'s invite code is now set to **\`${uppercaseCode}\`**!`
       )
     } else {
       // Set the channel name to Game 1
