@@ -22,26 +22,30 @@ export function code(bot: Bot) {
     let [number, code] = args.split(' ')
 
     // If someone uses shorthand syntax (.code CODEEE)
-    if ((number && codeRegex.test(number)) || number === 'reset') {
-      // Get the author
-      await msg.guild.members.fetch(msg.author.id).then((author) => {
+    if (!code) {
+      if ((number && codeRegex.test(number)) || number === 'reset') {
+        // Get the author
+        const author = await msg.guild.members.fetch(msg.author.id)
         // See if they are in any voice channels
-        if (author.voice.channel?.name) {
-          // Get the channel name and number
-          let channelName = author.voice.channel?.name
-          let match = channelName.match(channelNumberRegex)
-          // Assign shorthand variables to default behavior
-          if (match?.groups?.number) {
-            code = number === 'reset' ? '' : number
-            number = match?.groups?.number
-          }
-        } else {
-          // If someone is not in a voice channel, don't allow shorthand
-          msg.channel.send(
+        if (!author.voice.channel?.name) {
+          // If someone is not in a voice channel, don't allow shorthand, end here so there's no double message
+          return msg.channel.send(
             `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
           )
         }
-      })
+
+        // Get the channel name and number
+        const channelName = author.voice.channel?.name
+        const match = channelName.match(channelNumberRegex)
+        // Assign shorthand variables to default behavior
+        if (match?.groups?.number) {
+          code = number === 'reset' ? '' : number
+          number = match?.groups?.number
+        }
+      } else if (!new RegExp(/^\d+$/).test(number)) {
+        // If the code is not valid, let the next message be sent
+        code = number
+      }
     }
 
     // If there is a code and its invalid, tell them
@@ -56,9 +60,7 @@ export function code(bot: Bot) {
 
     // No voice channel, no happiness
     if (!voiceChannel) {
-      return msg.channel.send(
-        `Voice channel **Game #${number}** does not exist!`
-      )
+      return msg.channel.send(`Voice channel **#${number}** does not exist!`)
     }
 
     if (code) {
