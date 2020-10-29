@@ -6,7 +6,7 @@ const channelNumberRegex = /^#(?<number>\d+)/
 const defaultChannels = ['afk', 'mod-lounge', '+ New Game']
 const defaultRoomNum = 3
 for (let i = 0; i < defaultRoomNum; i++) {
-  defaultChannels.push('#' + (i + 1))
+  defaultChannels.push(`#${i + 1}`)
 }
 
 /**
@@ -19,7 +19,30 @@ export function code(bot: Bot) {
     if (!msg.guild) return
 
     // Get the number and code
-    const [number, code] = args.split(' ')
+    let [number, code] = args.split(' ')
+
+    // If someone uses shorthand syntax (.code CODEEE)
+    if ((number && codeRegex.test(number)) || number === 'reset') {
+      // Get the author
+      await msg.guild.members.fetch(msg.author.id).then((author) => {
+        // See if they are in any voice channels
+        if (author.voice.channel?.name) {
+          // Get the channel name and number
+          let channelName = author.voice.channel?.name
+          let match = channelName.match(channelNumberRegex)
+          // Assign shorthand variables to default behavior
+          if (match?.groups?.number) {
+            code = number === 'reset' ? '' : number
+            number = match?.groups?.number
+          }
+        } else {
+          // If someone is not in a voice channel, don't allow shorthand
+          msg.channel.send(
+            `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
+          )
+        }
+      })
+    }
 
     // If there is a code and its invalid, tell them
     if (code && !codeRegex.test(code)) {
@@ -67,11 +90,11 @@ export function code(bot: Bot) {
         )
         if (!isDefaultChannel) {
           await oldChannel.channel.delete()
+        } else {
+          // If it is a default channel, reset its name (replace the ending `... (CODEEE)`)
+          const basename = oldChannel.channel.name.replace(/\:\s[A-Z]{6}$/, '')
+          await oldChannel.channel.setName(basename)
         }
-
-        // If it is a default channel, reset its name (replace the ending `... (CODEEE)`)
-        const basename = oldChannel.channel.name.replace(/\:\s[A-Z]{6}$/, '')
-        await oldChannel.channel.setName(basename)
       }
     }
 
@@ -92,14 +115,7 @@ export function code(bot: Bot) {
           const match = gameChannel.name.match(channelNumberRegex)
           if (!match || !match.groups) continue
 
-          if (!highestChannel) {
-            highestChannel = Number(match.groups.number)
-          } else {
-            highestChannel = Math.max(
-              highestChannel,
-              Number(match.groups.number)
-            )
-          }
+          highestChannel = Math.max(highestChannel, Number(match.groups.number))
         }
 
         // Turn the current one into another game channel
@@ -112,8 +128,5 @@ export function code(bot: Bot) {
   })
 }
 
-/* 
-
-// If channel 
-
-*/
+// TODO: REMOVE DEFAULT CHANNELS and only delete if channel starts with #
+// and isn't in default cap (1-3)
