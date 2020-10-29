@@ -42,7 +42,7 @@ export function code(bot: Bot) {
           code = number === 'reset' ? '' : number
           number = match?.groups?.number
         }
-      } else {
+      } else if (!new RegExp(/^\d+$/).test(number)) {
         // If the code is not valid, let the next message be sent
         code = number
       }
@@ -60,9 +60,7 @@ export function code(bot: Bot) {
 
     // No voice channel, no happiness
     if (!voiceChannel) {
-      return msg.channel.send(
-        `Voice channel **Game #${number}** does not exist!`
-      )
+      return msg.channel.send(`Voice channel **#${number}** does not exist!`)
     }
 
     if (code) {
