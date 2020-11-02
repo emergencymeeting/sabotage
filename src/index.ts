@@ -1,11 +1,10 @@
 require('dotenv').config()
 
 import http from 'http'
-
-const port = process.env.WEBSITES_PORT || process.env.PORT || 8080
-
 import { Bot } from './lib/bot'
 import functions from './functions'
+
+const port = process.env.WEBSITES_PORT || process.env.PORT || 8080
 
 // Our Bot client!
 const bot = new Bot()
