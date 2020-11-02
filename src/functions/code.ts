@@ -18,8 +18,14 @@ export function code(bot: Bot) {
   bot.command('code', async (args, msg) => {
     if (!msg.guild) return
 
-    // Get the number and code
-    let [number, code] = args.split(' ')
+    // Get the number, code, and regionCode
+    let [number, code, regionCode] = args.split(' ')
+
+    // User is trying to use shorthand with code and regionCode. Args need to be shifted over.
+    if (number?.length === 6 && code?.length === 2 && !regionCode) {
+      regionCode = code
+      code = ''
+    }
 
     // If someone uses shorthand syntax (.code CODEEE)
     if (!code) {
@@ -33,7 +39,6 @@ export function code(bot: Bot) {
             `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
           )
         }
-
         // Get the channel name and number
         const channelName = author.voice.channel?.name
         const match = channelName.match(channelNumberRegex)
@@ -65,7 +70,9 @@ export function code(bot: Bot) {
 
     if (code) {
       // Set the channel name to Game 1 (ABCDEQ)
-      const uppercaseCode = code.toUpperCase()
+      const uppercaseCode = `${code.toUpperCase()}${
+        regionCode ? ': ' + regionCode.toUpperCase() : ''
+      }`
       await voiceChannel.setName(`#${number}: ${uppercaseCode}`)
       return msg.channel.send(
         `Game #${number}'s invite code is now set to **\`${uppercaseCode}\`**!`
