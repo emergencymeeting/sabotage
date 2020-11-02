@@ -19,10 +19,23 @@ bot.load(functions).then(async () => {
   bot.log.success(`I'd rate the startup a ${rating}/10`)
 })
 
+const friends = [
+  'Jason',
+  'Em',
+  'Tierney',
+  'Sam',
+  'Clippy'
+]
+
+function susGen () {
+  const num = Math.floor(Math.random() * friends.length)
+  return friends[num]
+}
+
 const server = http.createServer((req, res) => {
   res.statusCode = 200
   res.setHeader('Content-Type', 'text/html')
-  res.end('<h1>Hello, World!</h1>')
+  res.end(`<h1>${susGen()} is sus.</h1>`)
 })
 
 server.listen(port, () => {
