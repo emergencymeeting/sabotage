@@ -24,7 +24,8 @@ const friends = [
   'Em',
   'Tierney',
   'Sam',
-  'Clippy'
+  'Clippy',
+  'Joel'
 ]
 
 function susGen () {
