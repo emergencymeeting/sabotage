@@ -73,7 +73,7 @@ export function code(bot: Bot) {
     } else {
       // Set the channel name to Game 1
       await voiceChannel.setName(`#${number}`)
-      return msg.channel.send(`Game ${number}'s invite code has been reset`)
+      return msg.channel.send(`Game #${number}'s invite code has been reset`)
     }
   })
 
