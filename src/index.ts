@@ -3,6 +3,7 @@ require('dotenv').config()
 import express from 'express'
 import { Bot } from './lib/bot'
 import functions from './functions'
+import { VoiceChannel } from 'discord.js'
 
 const port = process.env.WEBSITES_PORT || process.env.PORT || 8080
 
@@ -28,8 +29,44 @@ function susGen() {
 
 const app = express()
 
+app.use(express.json())
+
 app.get('/', (req, res) => {
   res.send(`<h1>${susGen()} is sus.</h1>`)
+})
+
+app.post('/comms', async (req, res) => {
+  const { voiceChannelId, usersThatCanSpeak } = req.body
+
+  // Look up the voice channel by ID
+  const voiceChannel = (await bot.channels.fetch(
+    voiceChannelId
+  )) as VoiceChannel
+  if (voiceChannel.type !== 'voice') return res.sendStatus(418)
+
+  await Promise.all(
+    voiceChannel.members.map(async (member) => {
+      // TODO: Make this real smart g00d
+      const discordMemberCanSpeak = usersThatCanSpeak.includes(
+        member.user.username
+      )
+
+      if (discordMemberCanSpeak) {
+        const permission = voiceChannel.permissionOverwrites.find((value) => {
+          return value.type === 'member' && value.id === member.user.id
+        })
+
+        await permission?.delete()
+      } else {
+        await voiceChannel.createOverwrite(member.user, { SPEAK: false })
+      }
+
+      await member.voice.setChannel(voiceChannel)
+    })
+  )
+
+  // Mute (but not server mute) everyone
+  return res.sendStatus(200)
 })
 
 app.listen(port, () => {
