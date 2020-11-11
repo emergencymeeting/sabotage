@@ -2,12 +2,20 @@ import { Bot } from '../lib/bot'
 
 export const ROLE_PREFIX = 'sus: '
 
+const NAME_SYNTAX = /[a-zA-Z]+/
+
 /**
  * Running `.claim <name>` creates and sets a role for the message author.
  * This is used to map Discord names to in-game names.
  */
 export function claim(bot: Bot) {
   bot.command('claim', async (name, msg) => {
+    if (!NAME_SYNTAX.test(name)) {
+      return msg.channel.send(
+        `Sorry ${msg.author}, \`${name}\` is not a valid name in Among Us. ❤️`
+      )
+    }
+
     const newRoleName = ROLE_PREFIX + name
 
     // Check if someone else already has this sus role
