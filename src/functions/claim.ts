@@ -2,7 +2,7 @@ import { Bot } from '../lib/bot'
 
 export const ROLE_PREFIX = 'sus: '
 
-const NAME_SYNTAX = /[a-zA-Z]+/
+const NAME_SYNTAX = /[a-zA-Z0-9]{1,10}/
 
 /**
  * Running `.claim <name>` creates and sets a role for the message author.
