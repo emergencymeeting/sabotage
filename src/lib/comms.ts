@@ -1,10 +1,25 @@
 import express from 'express'
 import { VoiceChannel } from 'discord.js'
 import { Bot } from './bot'
+import passport from './discord-auth'
 import { ROLE_PREFIX } from '../functions/claim'
 
 export default (bot: Bot) => {
   const router = express.Router()
+
+  router.use(passport.initialize())
+
+  router.get('/web-auth', (req, res, next) => {
+    passport.authenticate('discord', { session: false }, (err, user) => {
+      if (err) {
+        return res.send('Oopsie whoopsie')
+      }
+      res.setHeader('Content-Type', 'text/html')
+      return res.send(
+        `Please copy this token into Comms: <input readonly value="${user.accessToken}" />`
+      )
+    })(req, res, next)
+  })
 
   // Mutes everyone except `usersThatCanSpeak`
   router.post('/mute', async (req, res) => {
