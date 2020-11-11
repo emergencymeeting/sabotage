@@ -23,9 +23,11 @@
   "dependencies": {
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "signale": "^1.4.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.9",
     "@types/jest": "^26.0.15",
     "@types/signale": "^1.4.1",
     "husky": "^4.3.0",
