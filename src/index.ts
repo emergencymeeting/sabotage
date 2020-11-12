@@ -1,8 +1,9 @@
 require('dotenv').config()
 
-import http from 'http'
+import express from 'express'
 import { Bot } from './lib/bot'
 import functions from './functions'
+import createCommsRouter from './lib/comms'
 
 const port = process.env.WEBSITES_PORT || process.env.PORT || 8080
 
@@ -19,26 +20,23 @@ bot.load(functions).then(async () => {
   bot.log.success(`I'd rate the startup a ${rating}/10`)
 })
 
-const friends = [
-  'Jason',
-  'Em',
-  'Tierney',
-  'Sam',
-  'Clippy',
-  'Joel'
-]
+const friends = ['Jason', 'Em', 'Tierney', 'Sam', 'Clippy', 'Joel']
 
-function susGen () {
+function susGen() {
   const num = Math.floor(Math.random() * friends.length)
   return friends[num]
 }
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'text/html')
-  res.end(`<h1>${susGen()} is sus.</h1>`)
+const app = express()
+
+app.use(express.json())
+
+app.get('/', (req, res) => {
+  res.send(`<h1>${susGen()} is sus.</h1>`)
 })
 
-server.listen(port, () => {
+app.use('/comms', createCommsRouter(bot))
+
+app.listen(port, () => {
   bot.log.success(`Server running at port ${port}`)
 })

@@ -6,7 +6,7 @@ It's primarily built to make it easier to share your current private room code, 
 
 ## Running The Bot
 
-To start, run the following commands: 
+To start, run the following commands:
 
 > **Note:** this assumes you have both [git](https://git-scm.com/) and [Node.js](https://nodejs.org/en/) installed - if not, see those links to download them.
 
@@ -24,12 +24,14 @@ npm install
 npm run build
 ```
 
-You'll need to [set up a Discord App](https://discord.com/developers/applications). In the Developer Portal page for your app, go to the 'Bot' side tab, create a new bot, and note the bot token it generates. 
+You'll need to [set up a Discord App](https://discord.com/developers/applications). In the Developer Portal page for your app, go to the 'Bot' side tab, create a new bot, and note the bot token it generates.
 
 After that, create a file called `.env` in the project directory and add your bot token in the following format:
 
 ```
 BOT_TOKEN=<your discord bot app token>
+DISCORD_CLIENT_ID=<your discord app client id>
+DISCORD_CLIENT_SECRET=<your discord app client secret>
 ```
 
 Then, run the app:
