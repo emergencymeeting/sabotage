@@ -41,16 +41,29 @@ export default (bot: Bot) => {
           )
         })
 
-        if (discordMemberCanSpeak) {
-          // They can speak, so remove the overwrite that prevents them from speaking
-          const permission = voiceChannel.permissionOverwrites.find((value) => {
-            return value.type === 'member' && value.id === member.user.id
-          })
+        const isAdmin = member.permissions.has('ADMINISTRATOR')
 
-          await permission?.delete()
+        if (discordMemberCanSpeak) {
+          if (isAdmin) {
+            // They be admin, so we need to like "sudo unmute"
+            await member.voice.setMute(false)
+          } else {
+            // They can speak, so remove the overwrite that prevents them from speaking
+            const permission = voiceChannel.permissionOverwrites.find(
+              (value) => {
+                return value.type === 'member' && value.id === member.user.id
+              }
+            )
+
+            await permission?.delete()
+          }
         } else {
           // They cannot speak, so create an overwrite permission
-          await voiceChannel.createOverwrite(member.user, { SPEAK: false })
+          if (isAdmin) {
+            await member.voice.setMute(true)
+          } else {
+            await voiceChannel.createOverwrite(member.user, { SPEAK: false })
+          }
         }
 
         // Move them from this channel to... this channel, to refresh their (in)ability to speak
@@ -81,6 +94,17 @@ export default (bot: Bot) => {
     await Promise.all(
       permissions.map(async (permission) => permission.delete())
     )
+
+    await Promise.all([
+      ...(voiceChannel.members.map(async (member) => {
+        if (member.permissions.has('ADMINISTRATOR')) {
+          await member.voice.setMute(false)
+        }
+      }) as Promise<any>[]),
+      ...voiceChannel.members.map((member) =>
+        member.voice.setChannel(voiceChannel)
+      ),
+    ])
 
     return res.sendStatus(200)
   })
