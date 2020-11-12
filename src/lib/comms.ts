@@ -1,5 +1,6 @@
 import express from 'express'
 import { VoiceChannel } from 'discord.js'
+import fetch from 'node-fetch'
 import { Bot } from './bot'
 import passport from './discord-auth'
 import { ROLE_PREFIX } from '../functions/claim'
@@ -19,6 +20,49 @@ export default (bot: Bot) => {
         `Please copy this token into Comms: <input readonly value="${user.accessToken}" />`
       )
     })(req, res, next)
+  })
+
+  // Given an auth header, check if the user (whose token is in the header)
+  // is in the given voice channel.
+  router.use(async (req, res, next) => {
+    const { voiceChannelId } = req.body
+
+    // Check that we got the auth token header
+    const token = req.get('Authorization')
+    if (!token) return res.sendStatus(401)
+
+    try {
+      // Create a new client using the user's token
+      const response = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+          Authorization: `Bearer ${token.substr('token '.length)}`,
+        },
+      })
+
+      if (response.status !== 200) return res.sendStatus(403)
+
+      const user = await response.json()
+
+      // Look up the voice channel by ID
+      const voiceChannel = (await bot.channels.fetch(
+        voiceChannelId
+      )) as VoiceChannel
+      if (voiceChannel.type !== 'voice') return res.sendStatus(418)
+
+      // Check if the user is in the voice channel
+      const userIsInChannel = voiceChannel.members.find((member) => {
+        return member.user.id === user!.id
+      })
+
+      if (userIsInChannel) {
+        return next()
+      } else {
+        return res.sendStatus(403)
+      }
+    } catch (err) {
+      bot.log.error(err)
+      return res.sendStatus(403)
+    }
   })
 
   // Mutes everyone except `usersThatCanSpeak`
