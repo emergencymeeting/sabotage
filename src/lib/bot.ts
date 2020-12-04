@@ -31,7 +31,7 @@ export class Bot extends Client {
    * Reply to a message with an error annotation
    */
   public async replyWithError(description: string, msg: Message) {
-    return msg.reply({
+    return msg.reply('Error:', {
       embed: {
         color: 0xff0000,
         description,

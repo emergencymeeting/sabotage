@@ -35,8 +35,9 @@ export function code(bot: Bot) {
         // See if they are in any voice channels
         if (!author.voice.channel?.name) {
           // If someone is not in a voice channel, don't allow shorthand, end here so there's no double message
-          return msg.channel.send(
-            `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`
+          return bot.replyWithError(
+            `You must be in a voice channel, or use \`.code [channel number] [code]\` (example: \`.code 2 ASDQWD\`)`,
+            msg
           )
         }
         // Get the channel name and number
@@ -55,7 +56,10 @@ export function code(bot: Bot) {
 
     // If there is a code and its invalid, tell them
     if (code && !codeRegex.test(code)) {
-      return msg.channel.send(`**\`${code}\`** is not a valid code (6 letters)`)
+      return bot.replyWithError(
+        `**\`${code}\`** is not a valid code (6 letters)`,
+        msg
+      )
     }
 
     // Find the voice channel named `Game <number>`
@@ -65,7 +69,10 @@ export function code(bot: Bot) {
 
     // No voice channel, no happiness
     if (!voiceChannel) {
-      return msg.channel.send(`Voice channel **#${number}** does not exist!`)
+      return bot.replyWithError(
+        `Voice channel **#${number}** does not exist!`,
+        msg
+      )
     }
 
     if (code) {
@@ -74,13 +81,13 @@ export function code(bot: Bot) {
         regionCode ? ': ' + regionCode.toUpperCase() : ''
       }`
       await voiceChannel.setName(`#${number}: ${uppercaseCode}`)
-      return msg.channel.send(
+      return msg.reply(
         `Game #${number}'s invite code is now set to **\`${uppercaseCode}\`**!`
       )
     } else {
       // Set the channel name to Game 1
       await voiceChannel.setName(`#${number}`)
-      return msg.channel.send(`Game #${number}'s invite code has been reset`)
+      return msg.reply(`Game #${number}'s invite code has been reset`)
     }
   })
 
