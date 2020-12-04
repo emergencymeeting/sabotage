@@ -1,6 +1,5 @@
 import { Client, ClientOptions, Message } from 'discord.js'
 import { Signale } from 'signale'
-import MessageError from './message-error'
 
 export class Bot extends Client {
   public log: Signale
@@ -29,18 +28,13 @@ export class Bot extends Client {
   }
 
   /**
-   * Respond with a formatted error message if the handler throws
-   * an instance of MessageError
+   * Reply to a message with an error annotation
    */
-  public async respondWithError(err: any, msg: Message) {
-    this.log.error(err)
-
-    if (!(err instanceof MessageError)) return
-
-    return msg.channel.send('Error:', {
+  public async replyWithError(description: string, msg: Message) {
+    return msg.reply({
       embed: {
         color: 0xff0000,
-        description: err.message,
+        description,
       },
     })
   }
@@ -64,7 +58,7 @@ export class Bot extends Client {
       if (!match) return
 
       return handler(msg, match).catch((err: any) =>
-        this.respondWithError(err, msg)
+        this.replyWithError(err.message, msg)
       )
     })
   }

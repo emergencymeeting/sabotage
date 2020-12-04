@@ -1,7 +1,6 @@
 import { Signale } from 'signale'
-import { Message, ClientUser, TextChannel, User } from 'discord.js'
+import { Message, ClientUser, User } from 'discord.js'
 import { Bot } from '../../src/lib/bot'
-import MessageError from '../../src/lib/message-error'
 
 describe('Bot', () => {
   let bot: Bot
@@ -36,24 +35,16 @@ describe('Bot', () => {
     })
   })
 
-  describe('#respondWithError', () => {
-    it('calls msg.channel.send with the error message', async () => {
+  describe('#replyWithError', () => {
+    it('calls msg.reply with the error message', async () => {
       const msg = {
-        channel: { send: jest.fn() as unknown } as TextChannel,
+        reply: jest.fn() as unknown,
       } as Message
-      await bot.respondWithError(new MessageError('Oh no!'), msg)
+      await bot.replyWithError('Oh no!', msg)
 
-      expect(msg.channel.send).toHaveBeenCalled()
-      const call = (msg.channel.send as jest.Mock).mock.calls[0]
+      expect(msg.reply).toHaveBeenCalled()
+      const call = (msg.reply as jest.Mock).mock.calls[0]
       expect(call).toMatchSnapshot()
-    })
-
-    it('does not call msg.channel.send if the error is not a MessageError', async () => {
-      const msg = {
-        channel: { send: jest.fn() as unknown } as TextChannel,
-      } as Message
-      await bot.respondWithError(new Error('Oh no!'), msg)
-      expect(msg.channel.send).not.toHaveBeenCalled()
     })
   })
 
