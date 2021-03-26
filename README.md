@@ -12,7 +12,7 @@ To start, run the following commands:
 
 ```
 ## step 1: pull down this repository
-git clone https://github.com/JasonEtco/sabotage.git
+git clone https://github.com/emergencymeeting/sabotage.git
 
 ## step 2: open up the repository we just pulled down
 cd sabotage
@@ -46,7 +46,7 @@ To start, run the following commands:
 
 ```
 ## step 1: pull down this repository
-git clone https://github.com/JasonEtco/sabotage.git
+git clone https://github.com/emergencymeeting/sabotage.git
 
 ## step 2: open up the repository we just pulled down
 cd sabotage
