@@ -4,6 +4,7 @@ const mapUrls: { [key: string]: string } = {
   skeld: 'https://cdn.discordapp.com/attachments/420010319281127434/794073908054982696/ibx41dpjgnu51.png',
   mira: 'https://cdn.discordapp.com/attachments/420010319281127434/794073956721098772/qezv9ppjgnu51_1.png',
   polus: 'https://cdn.discordapp.com/attachments/420010319281127434/794073991135756329/0d6icnpjgnu51.png',
+  airship: 'https://cdn.discordapp.com/attachments/770436254663180321/827768010575970315/1617277190-744-capture-d-ecran.png',
 }
 
 /**
