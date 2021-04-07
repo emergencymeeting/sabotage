@@ -14,7 +14,7 @@ export function map(bot: Bot) {
   bot.command('map', async (mapName, msg) => {
     if (!mapUrls.hasOwnProperty(mapName)) {
       return msg.channel.send(
-        `${mapName} is not a valid map! Try \`skeld\`, \`mira\` or \`polus\`.`
+        `${mapName} is not a valid map! Try \`skeld\`, \`mira\`, \`polus\` or \`airship\`.`
       )
     }
 
