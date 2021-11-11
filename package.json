@@ -1,5 +1,5 @@
 {
-  "name": "among-us-bot",
+  "name": "sabotage",
   "private": true,
   "description": "The \"do-it-all\" Discord bot for the Humongous server.",
   "main": "index.js",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasonEtco/among-us-bot.git"
+    "url": "git+https://github.com/emergencymeeting/sabotage.git"
   },
   "author": "Jason Etcovitch <jasonetco@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JasonEtco/among-us-bot/issues"
+    "url": "https://github.com/emergencymeeting/sabotage/issues"
   },
-  "homepage": "https://github.com/JasonEtco/among-us-bot#readme",
+  "homepage": "https://github.com/emergencymeeting/sabotage#readme",
   "dependencies": {
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
