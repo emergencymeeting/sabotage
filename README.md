@@ -30,6 +30,8 @@ After that, create a file called `.env` in the project directory and add your bo
 
 ```
 BOT_TOKEN=<your discord bot app token>
+DISCORD_CLIENT_ID=<your discord app client id>
+DISCORD_CLIENT_SECRET=<your discord app client secret>
 ```
 
 Then, run the app:
